@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- PARENT PROJECT -->
+    <parent>
+        <artifactId>simulation</artifactId>
+        <groupId>montisim</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <!-- OUR OWN PROJECT -->
+    <artifactId>environment</artifactId>
+    <groupId>montisim-simulation</groupId>
+    <version>1.0.0</version>
+
+    <!-- Repository for osm4j -->
+    <repositories>
+        <repository>
+            <id>topobyte</id>
+            <url>http://mvn.topobyte.de</url>
+        </repository>
+    </repositories>
+
+    <!-- PROJECT DEPENDENCIES -->
+    <dependencies>
+
+        <!-- All modules have dependency to util -->
+        <dependency>
+            <groupId>montisim-simulation</groupId>
+            <artifactId>util</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Dependency to commons -->
+        <dependency>
+            <groupId>montisim</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-core</artifactId>
+            <version>0.0.18</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-utils</artifactId>
+            <version>0.0.22</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-xml</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-pbf</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-tbo</artifactId>
+            <version>0.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-geometry</artifactId>
+            <version>0.0.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>adt-geo</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>jts2awt</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>mercator-image</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wololo</groupId>
+            <artifactId>jts2geojson</artifactId>
+            <version>0.6.0
+            </version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.8
+            </version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+    </dependencies>
+
+
+    <!-- PROJECT PLUGINS AND PROPERTIES -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/test/data</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <!-- Set root directory to ensure same execution context in subprojects 
+                        (e.g. for Log in test mode) -->
+                    <workingDirectory>${project.parent.basedir}</workingDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+
+        <!-- Set root directory to ensure same execution context in subprojects 
+            (e.g. for Log in test mode) -->
+        <!-- <main.basedir>${project.parent.basedir}</main.basedir> -->
+
+        <!-- Specify Java 8 as version to avoid compile warnings -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+
+
+
+
+
+</project>
