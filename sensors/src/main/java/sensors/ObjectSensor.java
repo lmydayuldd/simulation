@@ -1,6 +1,5 @@
 package sensors;
 
-import commons.computervision.DetectedObject;
 import commons.controller.commons.BusEntry;
 import sensors.abstractsensors.AbstractSensor;
 import simulation.vehicle.PhysicalVehicle;
@@ -8,8 +7,11 @@ import simulation.vehicle.PhysicalVehicle;
 /**
  * Created by Marius on 17.05.2017.
  */
+
+// Deprecated because computervision was removed
+@Deprecated
 public class ObjectSensor extends AbstractSensor {
-    private DetectedObject value=null;
+    private Object value=null;
     public ObjectSensor(PhysicalVehicle physicalVehicle) {
         super(physicalVehicle);
     }
@@ -20,13 +22,13 @@ public class ObjectSensor extends AbstractSensor {
     }
 
     @Override
-    public DetectedObject getValue() {
+    public Object getValue() {
         return value;
     }
 
     @Override
     public String getTypeName() {
-        return DetectedObject.class.getTypeName();
+        return Object.class.getTypeName();
     }
 
     @Override
