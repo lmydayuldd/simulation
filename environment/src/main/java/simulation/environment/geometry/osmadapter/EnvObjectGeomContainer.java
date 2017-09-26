@@ -40,6 +40,10 @@ public interface EnvObjectGeomContainer {
      */
     public abstract double getDistanceToLeft(PhysicalObject o);
 
+    double getDistancetoFrontLeft(PhysicalObject o);
+
+    double getDistancetoFrontRight(PhysicalObject o);
+
     /**
      *
      * @param x

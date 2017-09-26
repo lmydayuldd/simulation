@@ -33,12 +33,6 @@ public class SensorFactory {
             return new CameraSensor(this.physicalVehicle);
         case SENSOR_COMPASS:
             return new CompassSensor(this.physicalVehicle);
-        case SENSOR_OBJECT:
-            return new ObjectSensor(this.physicalVehicle);
-        case SENSOR_LANE:
-            return new LaneSensor(this.physicalVehicle);
-        case SENSOR_VANISHINGPOINT:
-            return new VanishingPointSensor(this.physicalVehicle);
         case SENSOR_LEFT_BACK_WHEEL_DISTANCE_TO_STREET_SENSOR:
             return new LeftBackWheelDistanceToStreetSensor(this.physicalVehicle);
         case SENSOR_LEFT_FRONT_WHEEL_DISTANCE_TO_STREET_SENSOR:
@@ -47,6 +41,16 @@ public class SensorFactory {
             return new RightFrontWheelDistanceToStreetSensor(this.physicalVehicle);
         case SENSOR_RIGHT_BACK_WHEEL_DISTANCE_TO_STREET_SENSOR:
             return new RightBackWheelDistanceToStreetSensor(this.physicalVehicle);
+        case SENSOR_STREETTYPE:
+            return new StreetTypeSensor(this.physicalVehicle);
+        case SENSOR_DAYNIGHT:
+            return new DayNightSensor(this.physicalVehicle);
+        case SENSOR_LEFT_FRONT_DISTANCE:
+            return new LeftFrontDistanceSensor(this.physicalVehicle);
+        case SENSOR_RIGHT_FRONT_DISTANCE:
+            return new RightFrontDistanceSensor(this.physicalVehicle);
+        case SENSOR_OBSTACLE:
+            return new ObstacleSensor(this.physicalVehicle);
         default:
             break;
         }

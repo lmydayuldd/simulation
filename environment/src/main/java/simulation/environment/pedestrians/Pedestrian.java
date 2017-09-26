@@ -25,6 +25,9 @@ import java.util.Map;
  */
 public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPedestrian {
 
+    // 4.5 km/h in meters per millisecond
+    private static final double PEDESTRIAN_SPEED_DEFAULT = 4.5 / 3600;
+
     /**
      * Variables
      */
@@ -36,6 +39,9 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
 
     /** Collision of the object */
     private boolean collision;
+
+    /** Error of the object */
+    private boolean error;
 
     /** Speed of the object */
     private RealVector speed;
@@ -54,6 +60,7 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
         this.geomStreet = geomStreet;
         position = new ArrayRealVector(new double[] { 0.0, 0.0, 0.0 });
         collision = false;
+        error = false;
         speed = new ArrayRealVector(new double[] { 0.0, 0.0, 0.0 });
         rotationZ = 0.0;
     }
@@ -174,33 +181,6 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
     public double getOffsetZ() {
         return 0.0;
     }
-    /**
-     * Returns The Position of the FrontLeftWheel Position for DistanceCalculating. For Objects which are not
-     * PhysicalVehicle's it returns a null Vector.
-     * @return Vector of the Position.
-     */
-    public RealVector getFrontLeftWheelGeometryPos(){return null;}
-
-    /**
-     * Returns The Position of the FrontRightWheel Position for DistanceCalculating. For Objects which are not
-     * PhysicalVehicle's it returns a null Vector.
-     * @return Vector of the Position.
-     */
-    public RealVector getFrontRightWheelGeometryPos(){return null;}
-
-    /**
-     * Returns The Position of the BackLeftWheel Position for DistanceCalculating. For Objects which are not
-     * PhysicalVehicle's it returns a null Vector.
-     * @return Vector of the Position.
-     */
-    public RealVector getBackLeftWheelGeometryPos(){return null;}
-
-    /**
-     * Returns The Position of the BackRightWheel Position for DistanceCalculating. For Objects which are not
-     * PhysicalVehicle's it returns a null Vector.
-     * @return Vector of the Position.
-     */
-    public RealVector getBackRightWheelGeometryPos(){return null;}
 
     /**
      * Function that returns a boolean indicating if an object had a collision
@@ -226,8 +206,30 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
     }
 
     /**
+     * Function that returns a boolean indicating if an object had a computational error
+     *
+     * @return Boolean that indicates an error of that object
+     */
+    @Override
+    public boolean getError() {
+        return error;
+    }
+
+    /**
+     * Function that sets error for this object
+     *
+     * @param error Boolean that indicates an error of that object
+     */
+    @Override
+    public void setError(boolean error) {
+        Log.warning("Pedestrian: setError - error: " + error + ", Pedestrian at start: " + this);
+        this.error = error;
+        Log.warning("Pedestrian: setError - error: " + error + ", Pedestrian at end: " + this);
+    }
+
+    /**
      * Returns the unique ID of the object. Valid IDs are positive numbers.
-     * 
+     *
      * @return Unique ID
      */
     public long getId() {
@@ -271,9 +273,9 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
     public List<Map.Entry<RealVector, RealVector>> getBoundaryVectors() {
 
         // Build relative vectors between vertices
-        RealVector relVectorBackFront = new ArrayRealVector(new double[] { 0.0, getLength(), 0.0 });
-        RealVector relVectorLeftRight = new ArrayRealVector(new double[] { getWidth(), 0.0, 0.0 });
-        RealVector relVectorBottomTop = new ArrayRealVector(new double[] { 0.0, 0.0, getHeight() });
+        RealVector relVectorBackFront = new ArrayRealVector(new double[] {0.0, getLength(), 0.0});
+        RealVector relVectorLeftRight = new ArrayRealVector(new double[] {getWidth(), 0.0, 0.0});
+        RealVector relVectorBottomTop = new ArrayRealVector(new double[] {0.0, 0.0, getHeight()});
 
         // Rotate relative vectors
         relVectorBackFront = getGeometryRot().operate(relVectorBackFront);
@@ -304,25 +306,48 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
     }
 
     @Override
-    public void executeLoopIteration(long timeDiffMs) {
-        //get last movement parameters
-        PedestrianStreetParameters lastMovementParameters = this.getStreetParameters();
+    public RealVector getFrontLeftWheelGeometryPos() {
+        return null;
+    }
 
-        //movement a pedestrians does in each time step
-        //4.5 km/h in meters per millisecond
-        double distance = (4.5/3600);
-        
-        distance = distance * timeDiffMs;
-        //compute new movement parameters
-        PedestrianStreetParameters newParams;
-        if(Math.random() <= 0.8 || lastMovementParameters.isCrossing()) {
-            newParams = this.geomStreet.getMovementOfPedestrian(lastMovementParameters, distance);
-        } else {
-            newParams = this.geomStreet.getMovementOfPedestrian(new PedestrianStreetParameters(true, lastMovementParameters.getPosition(), lastMovementParameters.isDirection(), lastMovementParameters.isLeftPavement()), distance);
+    @Override
+    public RealVector getFrontRightWheelGeometryPos() {
+        return null;
+    }
+
+    @Override
+    public RealVector getBackLeftWheelGeometryPos() {
+        return null;
+    }
+
+    @Override
+    public RealVector getBackRightWheelGeometryPos() {
+        return null;
+    }
+
+    @Override
+    public void executeLoopIteration(long timeDiffMs) {
+        // get last movement parameters
+        PedestrianStreetParameters movementParameters = this.getStreetParameters();
+
+
+        if(Math.random() < 0.025 && !movementParameters.isCrossing()) {
+            // So there is a 4% chances that we will cross the street
+            // This is the case and we will be just updating the state with the crossing flag
+            movementParameters = new PedestrianStreetParameters(
+                    true,
+                    movementParameters.getPosition(),
+                    movementParameters.isDirection(),
+                    movementParameters.isLeftPavement()
+            );
         }
 
+        // compute new movement parameters
+        // movement a pedestrians does in each time step
+        double distance = PEDESTRIAN_SPEED_DEFAULT * timeDiffMs;
+        PedestrianStreetParameters newParams = this.geomStreet.getMovementOfPedestrian(movementParameters, distance);
 
-        //set new movement parameters in pedestrian
+        // set new movement parameters in pedestrian
         this.setStreetParameters(newParams);
     }
 

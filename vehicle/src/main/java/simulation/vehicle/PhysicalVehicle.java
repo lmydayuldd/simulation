@@ -64,6 +64,9 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
     /** Indicator whether the vehicle has collided with another object */
     private boolean collision;
 
+    /** Error of the object */
+    private boolean error;
+
     /** Indicator whether the vehicle is fully initialized or not */
     private boolean physicalVehicleInitialized = false;
 
@@ -102,9 +105,10 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
         // Center of mass in local coordinate system is initialized with 0
         localPos = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
 
-        // By default vehicle is not in collision and has default car object type
+        // By default vehicle is not in collision or computational error and has default car object type
         physicalObjectType = PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_DEFAULT;
         collision = false;
+        error = false;
 
         // Set default simulationVehicle object with optional bus and controller, might be changed via PhysicalVehicleBuilder
         this.simulationVehicle = new Vehicle(controllerBus, controller, navigation);
@@ -365,9 +369,9 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
             massPoint.setGroundZ(groundZ);
             double limitZ = groundZ + simulationVehicle.getWheelRadius();
 
-            // If mass point position goes way below ground position + wheel radius, then set collision
+            // If mass point position goes way below ground position + wheel radius, then set computational error
             if (massPointPos.getEntry(2) < (limitZ - 0.5 * simulationVehicle.getWheelRadius())) {
-                setCollision(true);
+                setError(true);
             }
         }
         Log.finest("PhysicalVehicle: calcMassPointPosition - PhysicalVehicle at end: " + this);
@@ -510,9 +514,9 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
         force = result;
         Double forceNorm = force.getNorm();
 
-        // Set collision if forces are way too high to keep vehicle in stable state
+        // Set computational error if forces are way too high to keep vehicle in stable state
         if (forceNorm.isInfinite() || forceNorm.isNaN() || forceNorm > 1.0E10) {
-            setCollision(true);
+            setError(true);
         }
 
         Log.finest("PhysicalVehicle: calcForce - PhysicalVehicle at end: " + this);
@@ -703,7 +707,7 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
     public void executeLoopIteration(long timeDiffMs) {
         simulationVehicle.updateAllSensors();
 
-        if(!this.collision){
+        if (!this.collision && !this.error) {
             Log.finest("PhysicalVehicle: executeLoopIteration - timeDiffMs: " + timeDiffMs + ", PhysicalVehicle at start: " + this);
 
             final double deltaT = (timeDiffMs / 1000.0);
@@ -736,7 +740,7 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
 
             Log.finest("PhysicalVehicle: executeLoopIteration - timeDiffMs: " + timeDiffMs +  ", PhysicalVehicle at end: " + this);
         } else {
-            Log.finest("PhysicalVehicle: Vehicle collided and will therefore not move anymore, PhysicalVehicle: " + this);
+            Log.finest("PhysicalVehicle: Vehicle collided or had a computational error and will therefore not move anymore, PhysicalVehicle: " + this);
         }
     }
 
@@ -903,6 +907,44 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
     }
 
     /**
+     * Function that returns a boolean indicating if an object had a computational error
+     *
+     * @return Boolean that indicates a computational error of that object
+     */
+    @Override
+    public boolean getError() {
+        return error;
+    }
+
+    /**
+     * Function that sets a computational error for this object
+     *
+     * @param error Boolean that indicates a computational error of that object
+     */
+    @Override
+    public void setError(boolean error) {
+        Log.warning("PhysicalVehicle: setError - error: " + error + ", PhysicalVehicle at start: " + this);
+        this.error = error;
+
+        if (error) {
+            this.velocity = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+            this.acceleration = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+            this.angularVelocity = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+            this.angularMomentum = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+            this.angularMomentumDeriv = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+            MassPoint [] points = this.simulationVehicle.getWheelMassPoints();
+            for(MassPoint point : points){
+                point.setAcceleration(new ArrayRealVector(new double[] {0.0, 0.0, 0.0}));
+                point.setVelocity(new ArrayRealVector(new double[] {0.0, 0.0, 0.0}));
+                point.setForce(new ArrayRealVector(new double[] {0.0, 0.0, 0.0}));
+            }
+            this.simulationVehicle.setWheelMassPoints(points);
+        }
+
+        Log.warning("PhysicalVehicle: setError - error: " + error + ", PhysicalVehicle at end: " + this);
+    }
+
+    /**
      * Returns the unique ID of the object. Valid IDs are positive numbers.
      * @return Unique ID
      */
@@ -990,6 +1032,7 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
                 " , angularMomentumDeriv: " + angularMomentumDeriv +
                 " , physicalObjectType: " + physicalObjectType +
                 " , collision: " + collision +
+                " , error: " + error +
                 " , physicalVehicleInitialized: " + physicalVehicleInitialized +
                 " , simulationVehicle: " + simulationVehicle;
     }

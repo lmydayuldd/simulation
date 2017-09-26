@@ -75,6 +75,15 @@ public class GeomStreet implements EnvObjectGeomContainer {
     }
 
     @Override
+    public double getDistancetoFrontLeft(PhysicalObject o){
+        return this.deter.determineDistanceFrontLeft(o);
+    }
+    @Override
+    public double getDistancetoFrontRight(PhysicalObject o){
+        return this.deter.determineDistanceFrontRight(o);
+    }
+
+    @Override
     public double getGround(double x, double y, double z) {
         return this.deter.getGround(x, y, z);
     }

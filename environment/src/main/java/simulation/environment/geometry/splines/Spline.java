@@ -43,6 +43,10 @@ public interface Spline {
      */
     public abstract double computeDistanceToLeft(PhysicalObject o);
 
+    double computeDistanceToFrontLeft(PhysicalObject o);
+
+    double computeDistanceToFrontRight(PhysicalObject o);
+
     /**
      *
      * @param p

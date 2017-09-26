@@ -203,7 +203,6 @@ public class Parser2D implements IParser {
             Map<String, String> tags = OsmModelUtil.getTagsAsMap(way);
             String highway = tags.get("highway");
             if (highway != null) {
-
                 // Check if way is marked as oneWayRoad
                 boolean isOneWay = false;
                 String oneWayRoad = tags.get("oneway");
@@ -211,7 +210,7 @@ public class Parser2D implements IParser {
                     isOneWay = true;
                 }
 
-                constructStreet(way, isOneWay);
+                constructStreet(way, isOneWay, highway);
             }
         }
     }
@@ -220,9 +219,10 @@ public class Parser2D implements IParser {
      * construct a Street2D from a given OsmWay object
      * @param way
      * @param isOneWay
+     * @param highway
      * @throws EntityNotFoundException
      */
-    private void constructStreet(OsmWay way, boolean isOneWay) throws EntityNotFoundException {
+    private void constructStreet(OsmWay way, boolean isOneWay, String highway) throws EntityNotFoundException {
         List<EnvNode> nodes = new ArrayList<>();
 
         for (int i = 0; i < way.getNumberOfNodes(); i++) {
@@ -230,9 +230,7 @@ public class Parser2D implements IParser {
             nodes.add(new Node2D(node.getLongitude(), node.getLatitude(), 0, way.getNodeId(i)));
         }
 
-        this.streets.add(new Street2D(nodes, 50.d, mapper.getIntersectionsForWay(way), way.getId(), isOneWay));
-
-
+        this.streets.add(new Street2D(nodes, 50.d, mapper.getIntersectionsForWay(way), way.getId(), isOneWay, highway));
     }
 
     @Override

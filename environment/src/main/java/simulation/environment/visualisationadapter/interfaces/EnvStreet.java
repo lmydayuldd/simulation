@@ -36,4 +36,10 @@ public interface EnvStreet extends EnvObject {
      * @return Is the street oneWay
      */
     public abstract boolean isOneWay();
+
+    /**
+     *
+     * @return The Type of the Street
+     */
+    public abstract String getStreetType();
 }

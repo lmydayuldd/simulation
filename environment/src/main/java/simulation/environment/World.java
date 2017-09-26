@@ -4,6 +4,7 @@ import commons.map.ControllerContainer;
 import commons.map.IControllerNode;
 import commons.simulation.PhysicalObject;
 import javafx.geometry.Point3D;
+import simulation.environment.geometry.osmadapter.GeomStreet;
 import simulation.environment.pedestrians.PedestrianContainer;
 import simulation.environment.visualisationadapter.interfaces.VisualisationEnvironmentContainer;
 
@@ -46,6 +47,10 @@ public interface World {
      */
     public abstract Number getDistanceToLeftStreetBorder(PhysicalObject o);
 
+    Number getDistanceLeftFrontToStreetBorder(PhysicalObject o);
+
+    Number getDistanceRightFrontToStreetBorder(PhysicalObject o);
+
     /**
      * @param o
      * @return the Distance to the right border of the street for the Point specified by o
@@ -75,6 +80,12 @@ public interface World {
      * @return the Distance to the right border of the street for the right back wheel
      */
     public abstract Number getDistanceBackRightWheelToRightStreetBorder(PhysicalObject o);
+
+    /**
+     * @param o
+     * @return the Street the Vehicle o is on
+     */
+    public abstract GeomStreet getStreet(PhysicalObject o);
 
     /**
      * @return the Container to be used by the Visualisation-Group

@@ -623,7 +623,7 @@ public class Simulator {
      */
     public List<PhysicalObject> getCollidedObjects() {
         LinkedList<PhysicalObject> collidedObjects = new LinkedList<>(physicalObjects);
-        collidedObjects.removeIf(physicalObject -> !physicalObject.getCollision());
+        collidedObjects.removeIf(physicalObject -> (!physicalObject.getCollision() && !physicalObject.getError()));
         return collidedObjects;
     }
 

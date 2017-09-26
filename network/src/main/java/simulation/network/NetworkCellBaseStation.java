@@ -30,6 +30,9 @@ public class NetworkCellBaseStation implements SimulationLoopExecutable, Physica
     /** Collision of the object */
     private boolean collision;
 
+    /** Error of the object */
+    private boolean error;
+
     /** Unique ID */
     private long uniqueId = IdGenerator.getSharedInstance().generateUniqueId();
 
@@ -46,6 +49,7 @@ public class NetworkCellBaseStation implements SimulationLoopExecutable, Physica
     public NetworkCellBaseStation() {
         position = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
         collision = false;
+        error = false;
         rotationZ = 0.0;
         connectedBaseStationIDs.clear();
     }
@@ -187,6 +191,28 @@ public class NetworkCellBaseStation implements SimulationLoopExecutable, Physica
         Log.warning("NetworkCellBaseStation: setCollision - collision: " + collision + ", NetworkCellBaseStation at start: " + this);
         this.collision = collision;
         Log.warning("NetworkCellBaseStation: setCollision - collision: " + collision + ", NetworkCellBaseStation at end: " + this);
+    }
+
+    /**
+     * Function that returns a boolean indicating if an object had a computational error
+     *
+     * @return Boolean that indicates an error of that object
+     */
+    @Override
+    public boolean getError() {
+        return error;
+    }
+
+    /**
+     * Function that sets error for this object
+     *
+     * @param error Boolean that indicates an error of that object
+     */
+    @Override
+    public void setError(boolean error) {
+        Log.warning("NetworkCellBaseStation: setError - error: " + error + ", NetworkCellBaseStation at start: " + this);
+        this.error = error;
+        Log.warning("NetworkCellBaseStation: setError - error: " + error + ", NetworkCellBaseStation at end: " + this);
     }
 
     /**

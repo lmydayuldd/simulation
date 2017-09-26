@@ -252,6 +252,91 @@ public class SimulatorTest {
     }
 
     /**
+     * Returning objects with error returns objects with error only
+     */
+    @Test
+    public void returnErrorObjects() {
+        Simulator sim = Simulator.getSharedInstance();
+        SimObject a = new SimObject();
+        SimObject b = new SimObject();
+        SimObject c = new SimObject();
+
+        sim.registerPhysicalObject(a);
+        sim.registerPhysicalObject(b);
+        sim.registerPhysicalObject(c);
+
+        //No objects with error -> empty list
+        List<PhysicalObject> collided = sim.getCollidedObjects();
+        assertTrue(collided.size() == 0);
+
+        //error occurred -> return objects with error
+        a.setError(true);
+        collided = sim.getCollidedObjects();
+        assertTrue(collided.contains(a) && !collided.contains(b) && !collided.contains(c));
+        b.setError(true);
+        collided = sim.getCollidedObjects();
+        assertTrue(collided.contains(a) && collided.contains(b) && !collided.contains(c));
+
+        //Error resolved -> Not returned anymore
+        a.setError(false);
+        collided = sim.getCollidedObjects();
+        assertTrue(!collided.contains(a) && collided.contains(b) && !collided.contains(c));
+        b.setError(false);
+        collided = sim.getCollidedObjects();
+        assertTrue(collided.size() == 0);
+    }
+
+    /**
+     * Checking error memory
+     */
+    @SuppressWarnings("PointlessBooleanExpression")
+    @Test
+    public void errorObjectsMemory() {
+        Simulator sim = Simulator.getSharedInstance();
+        PhysicalVehicleBuilder physicalVehicleBuilder1 = PhysicalVehicleBuilder.getInstance();
+        PhysicalVehicle a = physicalVehicleBuilder1.buildPhysicalVehicle(Optional.empty(), Optional.empty(), Optional.empty());
+        PhysicalVehicleBuilder physicalVehicleBuilder2 = PhysicalVehicleBuilder.getInstance();
+        PhysicalVehicle b = physicalVehicleBuilder2.buildPhysicalVehicle(Optional.empty(), Optional.empty(), Optional.empty());
+        PhysicalVehicleBuilder physicalVehicleBuilder3 = PhysicalVehicleBuilder.getInstance();
+        PhysicalVehicle c = physicalVehicleBuilder3.buildPhysicalVehicle(Optional.empty(), Optional.empty(), Optional.empty());
+
+        sim.registerAndPutObject(a, 500.0, 500.0, 0.0);
+        sim.registerAndPutObject(b, 600.0, 600.0, 0.0);
+        sim.registerAndPutObject(c, 700.0, 700.0, 0.0);
+
+        //No objects with error
+        List<PhysicalObject> collided = sim.getCollidedObjects();
+        assertTrue(sim.collisionPresent() == false);
+        assertTrue(sim.collisionOccurred() == false);
+
+        //Error occurred
+        a.setError(true);
+        sim.stopAfter(100);
+        sim.startSimulation();
+        sim.waitUntilSimulationFinished();
+        assertTrue(sim.collisionPresent() == true);
+        assertTrue(sim.collisionOccurred() == true);
+
+        //Reset collision detection
+        sim.resetCollisionOccurred();
+        assertTrue(sim.collisionPresent() == true);
+        assertTrue(sim.collisionOccurred() == false);
+
+        //Extending simulation updates memory
+        sim.extendSimulationTime(100);
+        sim.startSimulation();
+        sim.waitUntilSimulationFinished();
+        assertTrue(sim.collisionPresent() == true);
+        assertTrue(sim.collisionOccurred() == true);
+
+        //Error resolved
+        a.setCollision(false);
+        a.setError(false);
+        assertTrue(sim.collisionPresent() == false);
+        assertTrue(sim.collisionOccurred() == true);
+    }
+
+    /**
      * Checks that didExecute and willExecute are called for every loop iteration
      */
     @Test
@@ -951,6 +1036,7 @@ public class SimulatorTest {
 
     private class SimObject implements SimulationLoopExecutable, PhysicalObject {
         boolean collision = false;
+        boolean error = false;
         public void executeLoopIteration(long timeDiffMs) {}
         public PhysicalObjectType getPhysicalObjectType() {return PhysicalObjectType.PHYSICAL_OBJECT_TYPE_TREE;}
         public RealVector getGeometryPos() {return new ArrayRealVector(new double[]{0.0, 0.0, 0.0});}
@@ -961,6 +1047,8 @@ public class SimulatorTest {
         public double getOffsetZ() {return 0;}
         public boolean getCollision() {return collision;}
         public void setCollision(boolean collision) {this.collision = collision;}
+        public boolean getError() {return error;}
+        public void setError(boolean error) {this.error = error;}
         public List<Map.Entry<RealVector, RealVector>> getBoundaryVectors() {return new ArrayList<>();}
         public long getId() {return 0;}
         public RealVector getAcceleration() {return new ArrayRealVector(new double[] {0.0, 0.0, 0.0});}

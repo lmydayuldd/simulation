@@ -40,10 +40,4 @@ public class WeatherSensor extends AbstractSensor {
     public String getTypeName() {
         return Double.class.getTypeName();
     }
-
-    /**
-     * Created by Marius on 17.05.2017.
-     */
-    public static class VanishingPointSensor {
-    }
 }

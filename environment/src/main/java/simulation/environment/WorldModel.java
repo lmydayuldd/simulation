@@ -37,7 +37,6 @@ public class WorldModel implements World{
 
     private static final String defaultMap = "/map_ahornstrasse.osm";
 
-
     public static World getInstance() {
         if(ourInstance == null) {
             try {
@@ -184,6 +183,18 @@ public class WorldModel implements World{
 
     /**
      *
+     * @param o
+     * @return returns the Street the Vehicle is on
+     */
+    @Override
+    public GeomStreet getStreet(PhysicalObject o){
+        EnvNode n = new Node2D(o.getGeometryPos().getEntry(0),o.getGeometryPos().getEntry(1),o.getGeometryPos().getEntry(2));
+        GeomStreet street = getMinimumStreetForNode(n);
+        return street;
+    }
+
+    /**
+     *
      * @param n
      * @param numberOfStreets
      * @return returns the n nearest streets for this node
@@ -242,6 +253,25 @@ public class WorldModel implements World{
         return minStreet.getDistanceToLeft(o);
     }
 
+    @Override
+    public Number getDistanceLeftFrontToStreetBorder(PhysicalObject o){
+        RealVector pos = o.getBackLeftWheelGeometryPos();
+
+        EnvNode n = new Node2D(pos.getEntry(0),pos.getEntry(1),pos.getEntry(2));
+        GeomStreet minStreet = getMinimumStreetForNode(n);
+
+        return minStreet.getDistancetoFrontLeft(o);
+    }
+
+    @Override
+    public Number getDistanceRightFrontToStreetBorder(PhysicalObject o){
+        RealVector pos = o.getBackLeftWheelGeometryPos();
+
+        EnvNode n = new Node2D(pos.getEntry(0),pos.getEntry(1),pos.getEntry(2));
+        GeomStreet minStreet = getMinimumStreetForNode(n);
+
+        return minStreet.getDistancetoFrontRight(o);
+    }
 
     @Override
     public Number getDistanceToRightStreetBorder(PhysicalObject o) {

@@ -46,40 +46,44 @@ public class PhysicsEngine{
 
         double deltaT = timeDiffMs / 1000.0;
 
-        // Check objects for collisions
-        for (PhysicalObject physicalObject : physicalObjects) {
-            // Do not compute collision if its the same object or when both objects are already in collision
-            if (physicalObject.getId() == object.getId() || (physicalObject.getCollision() && object.getCollision())) {
-                continue;
-            }
+        //Do not compute collision if the object has a computational error
+        if (!object.getError()) {
 
-            // Do not compute collision if both objects are more than 100 meters away from each other
-            if (physicalObject.getGeometryPos().getDistance(object.getGeometryPos()) >= 100.0) {
-                continue;
-            }
+            // Check objects for collisions
+            for (PhysicalObject physicalObject : physicalObjects) {
+                // Do not compute collision if its the same object or when both objects are already in collision/computational error
+                if (physicalObject.getId() == object.getId() || ((physicalObject.getError() || physicalObject.getCollision()) && object.getCollision())) {
+                    continue;
+                }
 
-            // Do not compute collision if objects do not overlap in height
-            double minHeight = object.getGeometryPos().getEntry(2) - 0.5 * object.getHeight();
-            double maxHeight = object.getGeometryPos().getEntry(2) + 0.5 * object.getHeight();
-            double otherMinHeight = physicalObject.getGeometryPos().getEntry(2) - 0.5 * physicalObject.getHeight();
-            double otherMaxHeight = physicalObject.getGeometryPos().getEntry(2) + 0.5 * physicalObject.getHeight();
-            boolean heightOverlap = (minHeight >= otherMinHeight && minHeight <= otherMaxHeight) ||
-                                    (maxHeight >= otherMinHeight && maxHeight <= otherMaxHeight) ||
-                                    (otherMinHeight >= minHeight && otherMinHeight <= maxHeight) ||
-                                    (otherMaxHeight >= minHeight && otherMaxHeight <= maxHeight);
+                // Do not compute collision if both objects are more than 100 meters away from each other
+                if (physicalObject.getGeometryPos().getDistance(object.getGeometryPos()) >= 100.0) {
+                    continue;
+                }
 
-            if (!heightOverlap) {
-                continue;
-            }
+                // Do not compute collision if objects do not overlap in height
+                double minHeight = object.getGeometryPos().getEntry(2) - 0.5 * object.getHeight();
+                double maxHeight = object.getGeometryPos().getEntry(2) + 0.5 * object.getHeight();
+                double otherMinHeight = physicalObject.getGeometryPos().getEntry(2) - 0.5 * physicalObject.getHeight();
+                double otherMaxHeight = physicalObject.getGeometryPos().getEntry(2) + 0.5 * physicalObject.getHeight();
+                boolean heightOverlap = (minHeight >= otherMinHeight && minHeight <= otherMaxHeight) ||
+                        (maxHeight >= otherMinHeight && maxHeight <= otherMaxHeight) ||
+                        (otherMinHeight >= minHeight && otherMinHeight <= maxHeight) ||
+                        (otherMaxHeight >= minHeight && otherMaxHeight <= maxHeight);
 
-            // Perform collision computation
-            List<Map.Entry<RealVector, RealVector>> boundaries = object.getBoundaryVectors();
-            List<Map.Entry<RealVector, RealVector>> otherBoundaries = physicalObject.getBoundaryVectors();
-            boolean collisionDetected = MathHelper.checkIntersection2D(boundaries, otherBoundaries);
+                if (!heightOverlap) {
+                    continue;
+                }
 
-            if (collisionDetected) {
-                object.setCollision(true);
-                physicalObject.setCollision(true);
+                // Perform collision computation
+                List<Map.Entry<RealVector, RealVector>> boundaries = object.getBoundaryVectors();
+                List<Map.Entry<RealVector, RealVector>> otherBoundaries = physicalObject.getBoundaryVectors();
+                boolean collisionDetected = MathHelper.checkIntersection2D(boundaries, otherBoundaries);
+
+                if (collisionDetected) {
+                    object.setCollision(true);
+                    physicalObject.setCollision(true);
+                }
             }
         }
 
@@ -91,7 +95,7 @@ public class PhysicsEngine{
             case PHYSICAL_OBJECT_TYPE_CAR_4:
             case PHYSICAL_OBJECT_TYPE_CAR_5:
                 PhysicalVehicle vehicle = (PhysicalVehicle) object;
-                if(!object.getCollision()){
+                if (!object.getCollision() && !object.getError()){
                     calcMassPointForces(deltaT, vehicle);
                 }
                 break;
