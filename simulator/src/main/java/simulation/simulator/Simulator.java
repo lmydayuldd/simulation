@@ -365,8 +365,6 @@ public class Simulator {
 
         //Update simulated daytime
         daytime.add(Calendar.MILLISECOND, (int)timeBetweenLastIterations * daytimeSpeedup);
-        
-
 
         synchronized (loopObservers) {
             //Inform observers about upcoming loop iteration
@@ -389,8 +387,10 @@ public class Simulator {
 
                 //Execute loop
                 if(object instanceof PhysicalObject){
+                    PhysicsEngine.resetForces((PhysicalObject) object);
                     PhysicsEngine.computePhysics((PhysicalObject) object, getPhysicalObjects(), timeBetweenLastIterations);
                 }
+
                 object.executeLoopIteration(timeBetweenLastIterations);
 
                 // Inform observers about completed loop iteration for each object

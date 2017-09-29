@@ -5,6 +5,7 @@ import sensors.abstractsensors.AbstractSensor;
 import simulation.environment.World;
 import simulation.environment.WorldModel;
 import simulation.environment.geometry.osmadapter.GeomStreet;
+import simulation.environment.visualisationadapter.implementation.Street2D;
 import simulation.vehicle.PhysicalVehicle;
 import simulation.environment.visualisationadapter.interfaces.EnvStreet;
 
@@ -29,14 +30,8 @@ public class StreetTypeSensor extends AbstractSensor {
         World world = WorldModel.getInstance();
         GeomStreet geom = world.getStreet(getPhysicalVehicle());
         EnvStreet env = (EnvStreet) geom.getObject();
-        String result = env.getStreetType();
-
-        // Null values are not allowed as values in controller
-        if (result == null) {
-            result = "";
-        }
-
-        this.value = result;
+        Street2D s2d = (Street2D) env;
+        this.value = s2d.getStreetType().toString();
     }
 
     @Override

@@ -230,7 +230,7 @@ public class Parser2D implements IParser {
             nodes.add(new Node2D(node.getLongitude(), node.getLatitude(), 0, way.getNodeId(i)));
         }
 
-        this.streets.add(new Street2D(nodes, 50.d, mapper.getIntersectionsForWay(way), way.getId(), isOneWay, highway));
+        this.streets.add(new Street2D(nodes, 50.d, mapper.getIntersectionsForWay(way), way.getId(), isOneWay, parseStreetType(highway)));
     }
 
     @Override
@@ -251,4 +251,21 @@ public class Parser2D implements IParser {
         return this.containerM;
     }
 
+    /**
+     * converts String streettype in enum
+     * @param s as streettype
+     */
+    public EnvStreet.StreetTypes parseStreetType(String s) {
+        if (s.equals("motorway")) {
+            return EnvStreet.StreetTypes.MOTORWAY;
+        } else if (s.equals("unclassified") || s.equals("tertiary") || s.equals("trunk_link")) {
+            return EnvStreet.StreetTypes.A_ROAD;
+        } else if (s.equals("residential") || s.equals("service")) {
+            return EnvStreet.StreetTypes.STREET;
+        } else if (s.equals("living_street")) {
+            return EnvStreet.StreetTypes.LIVING_STREET;
+        } else {
+            return EnvStreet.StreetTypes.A_ROAD;    //Default
+        }
+    }
 }

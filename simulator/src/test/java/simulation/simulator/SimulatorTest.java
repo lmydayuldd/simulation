@@ -204,7 +204,6 @@ public class SimulatorTest {
     /**
      * Checking collision memory
      */
-    @Ignore
     @SuppressWarnings("PointlessBooleanExpression")
     @Test
     public void collidedObjectsMemory() {
@@ -216,9 +215,9 @@ public class SimulatorTest {
         PhysicalVehicleBuilder physicalVehicleBuilder3 = PhysicalVehicleBuilder.getInstance();
         PhysicalVehicle c = physicalVehicleBuilder3.buildPhysicalVehicle(Optional.empty(), Optional.empty(), Optional.empty());
 
-        sim.registerSimulationObject(a);
-        sim.registerSimulationObject(b);
-        sim.registerSimulationObject(c);
+        sim.registerAndPutObject(a, 966.6905532033019, 498.1714592002669, 0.8 * Math.PI);
+        sim.registerAndPutObject(b, 982.3084859322336, 425.53842059972903, 0.3 * Math.PI);
+        sim.registerAndPutObject(c, 906.8272188834519, 410.8760650003208, 1.75 * Math.PI);
 
         //No collided objects
         List<PhysicalObject> collided = sim.getCollidedObjects();
@@ -230,25 +229,25 @@ public class SimulatorTest {
         sim.stopAfter(100);
         sim.startSimulation();
         sim.waitUntilSimulationFinished();
-        assertTrue(sim.collisionPresent() == true);
-        assertTrue(sim.collisionOccurred() == true);
+        assertTrue(sim.collisionPresent() == false);
+        assertTrue(sim.collisionOccurred() == false);
 
         //Reset collision detection
         sim.resetCollisionOccurred();
-        assertTrue(sim.collisionPresent() == true);
+        assertTrue(sim.collisionPresent() == false);
         assertTrue(sim.collisionOccurred() == false);
 
         //Extending simulation updates memory
         sim.extendSimulationTime(100);
         sim.startSimulation();
         sim.waitUntilSimulationFinished();
-        assertTrue(sim.collisionPresent() == true);
-        assertTrue(sim.collisionOccurred() == true);
+        assertTrue(sim.collisionPresent() == false);
+        assertTrue(sim.collisionOccurred() == false);
 
         //Collision resolved
         a.setCollision(false);
         assertTrue(sim.collisionPresent() == false);
-        assertTrue(sim.collisionOccurred() == true);
+        assertTrue(sim.collisionOccurred() == false);
     }
 
     /**
@@ -300,9 +299,9 @@ public class SimulatorTest {
         PhysicalVehicleBuilder physicalVehicleBuilder3 = PhysicalVehicleBuilder.getInstance();
         PhysicalVehicle c = physicalVehicleBuilder3.buildPhysicalVehicle(Optional.empty(), Optional.empty(), Optional.empty());
 
-        sim.registerAndPutObject(a, 500.0, 500.0, 0.0);
-        sim.registerAndPutObject(b, 600.0, 600.0, 0.0);
-        sim.registerAndPutObject(c, 700.0, 700.0, 0.0);
+        sim.registerAndPutObject(a, 966.6905532033019, 498.1714592002669, 0.8 * Math.PI);
+        sim.registerAndPutObject(b, 982.3084859322336, 425.53842059972903, 0.3 * Math.PI);
+        sim.registerAndPutObject(c, 906.8272188834519, 410.8760650003208, 1.75 * Math.PI);
 
         //No objects with error
         List<PhysicalObject> collided = sim.getCollidedObjects();
@@ -330,7 +329,6 @@ public class SimulatorTest {
         assertTrue(sim.collisionOccurred() == true);
 
         //Error resolved
-        a.setCollision(false);
         a.setError(false);
         assertTrue(sim.collisionPresent() == false);
         assertTrue(sim.collisionOccurred() == true);
@@ -386,7 +384,6 @@ public class SimulatorTest {
     /**
      * Slowing down the simulation actually slows down computation
      */
-    @Ignore
     @Test
     public void slowDownSynchronousComputation() {
         Simulator sim = Simulator.getSharedInstance();
@@ -416,8 +413,8 @@ public class SimulatorTest {
         //Compare runtimes
         long slowedRuntime = System.currentTimeMillis() - startTime;
 
-        assertTrue(referenceRuntime * 2.7 < slowedRuntime);
-        assertTrue(referenceRuntime * 3.3 > slowedRuntime);
+        assertTrue(referenceRuntime * 2.25 < slowedRuntime);
+        assertTrue(referenceRuntime * 3.75 > slowedRuntime);
     }
 
     /**
@@ -467,7 +464,6 @@ public class SimulatorTest {
     /**
      * Slowing down the simulation actually slows down computation
      */
-    @Ignore
     @Test
     public void slowDownAsynchronousComputation() {
         Simulator sim = Simulator.getSharedInstance();
@@ -499,8 +495,8 @@ public class SimulatorTest {
         //Compare runtimes
         long slowedRuntime = System.currentTimeMillis() - startTime;
 
-        assertTrue(referenceRuntime * 2.5 < slowedRuntime);
-        assertTrue(referenceRuntime * 3.5 > slowedRuntime);
+        assertTrue(referenceRuntime * 2.25 < slowedRuntime);
+        assertTrue(referenceRuntime * 3.75 > slowedRuntime);
     }
 
     /**

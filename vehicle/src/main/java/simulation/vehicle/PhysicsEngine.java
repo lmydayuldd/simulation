@@ -52,7 +52,7 @@ public class PhysicsEngine{
             // Check objects for collisions
             for (PhysicalObject physicalObject : physicalObjects) {
                 // Do not compute collision if its the same object or when both objects are already in collision/computational error
-                if (physicalObject.getId() == object.getId() || ((physicalObject.getError() || physicalObject.getCollision()) && object.getCollision())) {
+                if (physicalObject.getId() == object.getId() || physicalObject.getError() || (physicalObject.getCollision() && object.getCollision())) {
                     continue;
                 }
 
@@ -83,6 +83,7 @@ public class PhysicsEngine{
                 if (collisionDetected) {
                     object.setCollision(true);
                     physicalObject.setCollision(true);
+                    calcCollisionForces(object, physicalObject, deltaT);
                 }
             }
         }
@@ -95,7 +96,7 @@ public class PhysicsEngine{
             case PHYSICAL_OBJECT_TYPE_CAR_4:
             case PHYSICAL_OBJECT_TYPE_CAR_5:
                 PhysicalVehicle vehicle = (PhysicalVehicle) object;
-                if (!object.getCollision() && !object.getError()){
+                if (!object.getError()){
                     calcMassPointForces(deltaT, vehicle);
                 }
                 break;
@@ -111,6 +112,40 @@ public class PhysicsEngine{
             default:
                 //Invalid type
                 Log.warning("PhysicsEngine: Invalid type in computePhysics");
+                break;
+        }
+    }
+
+    /**
+     * Resets Forces on all Masspoints of a given Object
+     * @param object Is the physical object, which forces have to be reset
+     */
+    public static void resetForces(PhysicalObject object){
+        switch (object.getPhysicalObjectType()) {
+            case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+            case PHYSICAL_OBJECT_TYPE_CAR_1:
+            case PHYSICAL_OBJECT_TYPE_CAR_2:
+            case PHYSICAL_OBJECT_TYPE_CAR_3:
+            case PHYSICAL_OBJECT_TYPE_CAR_4:
+            case PHYSICAL_OBJECT_TYPE_CAR_5:
+                PhysicalVehicle vehicle = (PhysicalVehicle) object;
+                MassPoint[] massPoints = vehicle.getSimulationVehicle().getWheelMassPoints();
+                for(MassPoint mp : massPoints) {
+                    mp.setForce(new ArrayRealVector(new double[] {0.0, 0.0, 0.0})) ;
+                }
+                break;
+            case PHYSICAL_OBJECT_TYPE_PEDESTRIAN:
+                //No forces
+                break;
+            case PHYSICAL_OBJECT_TYPE_TREE:
+                //No forces
+                break;
+            case PHYSICAL_OBJECT_TYPE_NETWORK_CELL_BASE_STATION:
+                //No forces
+                break;
+            default:
+                //Invalid type
+                Log.warning("PhysicsEngine: Invalid type in resetForces");
                 break;
         }
     }
@@ -179,7 +214,7 @@ public class PhysicsEngine{
             }
 
             // Set force to mass point
-            mp.setForce(forceResult);
+            mp.setForce(mp.getForce().add(forceResult));
         }
 
         Log.finest("PhysicsEngine: calcMassPointForces - PhysicalVehicle at end: " + vehicle);
@@ -514,5 +549,151 @@ public class PhysicsEngine{
         direction.setEntry(2, (velocity.getEntry(2) < 0.0 ? -1.0 : 1.0));
         forceAirFriction = velocity.ebeMultiply(velocity).ebeMultiply(direction).mapMultiply(scalarCoefficient);
         return forceAirFriction;
+    }
+
+    /**
+     * Function that calculates forces caused by a collision
+     *
+     * @param objectA First object for which the force should be computed
+     * @param objectB Sectond object for which force should be computed
+     * @param deltaT Time of the simulation step
+     */
+    private static void calcCollisionForces(PhysicalObject objectA, PhysicalObject objectB, double deltaT){
+        //Initial calculations for object A
+        RealVector velocityA = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+        double massA = 0.0;
+        RealVector momentumA = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+        switch (objectA.getPhysicalObjectType()) {
+            case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+            case PHYSICAL_OBJECT_TYPE_CAR_1:
+            case PHYSICAL_OBJECT_TYPE_CAR_2:
+            case PHYSICAL_OBJECT_TYPE_CAR_3:
+            case PHYSICAL_OBJECT_TYPE_CAR_4:
+            case PHYSICAL_OBJECT_TYPE_CAR_5:
+                PhysicalVehicle vehicleA = (PhysicalVehicle) objectA;
+                velocityA = vehicleA.getVelocity();
+                MassPoint[] massPointsA = vehicleA.getSimulationVehicle().getWheelMassPoints();
+                massA = 0.0;
+                for(MassPoint mp : massPointsA) {
+                    massA = massA + mp.getMass();
+                }
+                momentumA = velocityA.mapMultiply(massA);
+                break;
+        }
+
+        //Initial calculations for object B
+        RealVector velocityB = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+        double massB = 0.0;
+        RealVector momentumB = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+        switch (objectB.getPhysicalObjectType()) {
+            case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+            case PHYSICAL_OBJECT_TYPE_CAR_1:
+            case PHYSICAL_OBJECT_TYPE_CAR_2:
+            case PHYSICAL_OBJECT_TYPE_CAR_3:
+            case PHYSICAL_OBJECT_TYPE_CAR_4:
+            case PHYSICAL_OBJECT_TYPE_CAR_5:
+                PhysicalVehicle vehicleB = (PhysicalVehicle) objectB;
+                velocityB = vehicleB.getVelocity();
+                MassPoint[] massPointsB = vehicleB.getSimulationVehicle().getWheelMassPoints();
+                massB = 0.0;
+                for(MassPoint mp : massPointsB) {
+                    massB = massB + mp.getMass();
+                }
+                momentumB = velocityB.mapMultiply(massB);
+                break;
+        }
+
+        //Calculate new velocity
+        RealVector velocityANew = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+        RealVector velocityBNew = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
+        switch (objectA.getPhysicalObjectType()) {
+            case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+            case PHYSICAL_OBJECT_TYPE_CAR_1:
+            case PHYSICAL_OBJECT_TYPE_CAR_2:
+            case PHYSICAL_OBJECT_TYPE_CAR_3:
+            case PHYSICAL_OBJECT_TYPE_CAR_4:
+            case PHYSICAL_OBJECT_TYPE_CAR_5:
+                switch (objectB.getPhysicalObjectType()) {
+                    case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+                    case PHYSICAL_OBJECT_TYPE_CAR_1:
+                    case PHYSICAL_OBJECT_TYPE_CAR_2:
+                    case PHYSICAL_OBJECT_TYPE_CAR_3:
+                    case PHYSICAL_OBJECT_TYPE_CAR_4:
+                    case PHYSICAL_OBJECT_TYPE_CAR_5:
+                        //Both objects are cars
+                        RealVector temporaryCalculationA = velocityB;
+                        temporaryCalculationA = temporaryCalculationA.mapMultiply(2.0);
+                        temporaryCalculationA = temporaryCalculationA.subtract(velocityA);
+                        temporaryCalculationA = temporaryCalculationA.mapMultiply(massB);
+                        temporaryCalculationA = temporaryCalculationA.add(momentumA);
+                        velocityANew = temporaryCalculationA.mapDivide(massA + massB);
+                        RealVector temporaryCalculationB = velocityA;
+                        temporaryCalculationB = temporaryCalculationB.mapMultiply(2.0);
+                        temporaryCalculationB = temporaryCalculationB.subtract(velocityB);
+                        temporaryCalculationB = temporaryCalculationB.mapMultiply(massA);
+                        temporaryCalculationB = temporaryCalculationB.add(momentumB);
+                        velocityBNew = temporaryCalculationB.mapDivide(massB + massA);
+                        break;
+                    default:
+                        //Only object A is a car
+                        velocityANew = velocityA.mapMultiply(-1.0);
+                        break;
+                }
+                break;
+            default:
+                switch (objectB.getPhysicalObjectType()) {
+                    case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+                    case PHYSICAL_OBJECT_TYPE_CAR_1:
+                    case PHYSICAL_OBJECT_TYPE_CAR_2:
+                    case PHYSICAL_OBJECT_TYPE_CAR_3:
+                    case PHYSICAL_OBJECT_TYPE_CAR_4:
+                    case PHYSICAL_OBJECT_TYPE_CAR_5:
+                        //Only object B is a Car
+                        velocityBNew = velocityB.mapMultiply(-1.0);
+                        break;
+                    default:
+                        //Both object are not a car
+                        break;
+                }
+                break;
+        }
+
+        //Calculate new Momentum and Force
+        RealVector momentumANew = velocityANew.mapMultiply(massA);
+        RealVector momentumBNew = velocityBNew.mapMultiply(massB);
+        RealVector deltaMomentumA = momentumANew.subtract(momentumA);
+        RealVector deltaMomentumB = momentumBNew.subtract(momentumB);
+        RealVector forceA = deltaMomentumA.mapDivide(deltaT);
+        RealVector forceB = deltaMomentumB.mapDivide(deltaT);
+
+        //Distribute Forces on MassPoints
+        switch (objectA.getPhysicalObjectType()) {
+            case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+            case PHYSICAL_OBJECT_TYPE_CAR_1:
+            case PHYSICAL_OBJECT_TYPE_CAR_2:
+            case PHYSICAL_OBJECT_TYPE_CAR_3:
+            case PHYSICAL_OBJECT_TYPE_CAR_4:
+            case PHYSICAL_OBJECT_TYPE_CAR_5:
+                PhysicalVehicle vehicleA = (PhysicalVehicle) objectA;
+                MassPoint[] massPoints = vehicleA.getSimulationVehicle().getWheelMassPoints();
+                for(MassPoint mp : massPoints){
+                    mp.setForce(forceA.mapMultiply(mp.getMass()/massA));
+                }
+                break;
+        }
+        switch (objectB.getPhysicalObjectType()) {
+            case PHYSICAL_OBJECT_TYPE_CAR_DEFAULT:
+            case PHYSICAL_OBJECT_TYPE_CAR_1:
+            case PHYSICAL_OBJECT_TYPE_CAR_2:
+            case PHYSICAL_OBJECT_TYPE_CAR_3:
+            case PHYSICAL_OBJECT_TYPE_CAR_4:
+            case PHYSICAL_OBJECT_TYPE_CAR_5:
+                PhysicalVehicle vehicleB = (PhysicalVehicle) objectB;
+                MassPoint[] massPoints = vehicleB.getSimulationVehicle().getWheelMassPoints();
+                for(MassPoint mp : massPoints){
+                    mp.setForce(mp.getForce().add(forceB.mapMultiply(mp.getMass()/massB)));
+                }
+                break;
+        }
     }
 }

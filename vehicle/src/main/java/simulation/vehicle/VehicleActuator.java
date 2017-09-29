@@ -122,6 +122,21 @@ public class VehicleActuator {
     }
 
     /**
+     * Setter for the current value of the actuator
+     * Used to reset actuators in a collision
+     *
+     * @param value New value of the actuator
+     * @throws Exception If target value is not in allowed value range for actuator
+     */
+    public void setActuatorValueCurrent(double value) throws Exception {
+
+        if (value > actuatorValueMax || value < actuatorValueMin || Double.isNaN(value))
+            throw new Exception("VehicleActuator: setActuatorValueCurrent - Invalid actuator target value: " + value + " for actuator: " + this);
+
+        actuatorValueCurrent = value;
+    }
+
+    /**
      * Getter for the change rate of the actuator
      *
      * @return Change rate of the actuator

@@ -8,6 +8,13 @@ import java.util.Collection;
  * An interface for Streets in the Environment
  */
 public interface EnvStreet extends EnvObject {
+
+    // TODO: This should be moved to commons, controller needs to be able to access these constant values
+    /**
+     * Lists Type of Streets
+     */
+    public enum StreetTypes {MOTORWAY, A_ROAD, STREET, LIVING_STREET};
+
     /**
      * set STREET_WIDTH to 6 meters
      */
@@ -41,5 +48,5 @@ public interface EnvStreet extends EnvObject {
      *
      * @return The Type of the Street
      */
-    public abstract String getStreetType();
+    public abstract StreetTypes getStreetType();
 }

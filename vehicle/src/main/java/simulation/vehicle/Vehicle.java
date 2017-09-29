@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.List;
 
 import static commons.controller.commons.BusEntry.*;
+import static simulation.environment.visualisationadapter.interfaces.EnvStreet.StreetTypes.*;
 import static simulation.vehicle.MassPointType.*;
 import static simulation.vehicle.VehicleActuatorType.*;
 
@@ -376,10 +377,6 @@ public class Vehicle {
                 constantBusDataSent = true;
             }
 
-            // Set other values on bus that can change during simulation
-            controllerBus.get().setData(SIMULATION_DELTA_TIME.toString(), deltaT);
-            controllerBus.get().setData(VEHICLE_MAX_TEMPORARY_ALLOWED_VELOCITY.toString(), getMaxTemporaryAllowedVelocity());
-
             // Send sensor data: Write values to bus
             for (Sensor sensor : sensorList) {
                 // Put data from sensor on the bus
@@ -391,6 +388,34 @@ public class Vehicle {
                     controllerBus.get().setData(SENSOR_CURRENT_SURFACE.toString(), surface);
                 }
             }
+
+            // TODO: This logic should be moved to the controller!
+            Optional<Sensor> streetTypeSensor = getSensorByType(SENSOR_STREETTYPE);
+            if (streetTypeSensor.isPresent()) {
+                String streetType = (String)(streetTypeSensor.get().getValue());
+                double allowedVelocityByStreetType = Double.MAX_VALUE;
+
+                switch(streetType){
+                    case "MOTORWAY":
+                        allowedVelocityByStreetType = 100.0;
+                        break;
+                    case "A_ROAD":
+                        allowedVelocityByStreetType = 70.0;
+                        break;
+                    case "STREET":
+                        allowedVelocityByStreetType = 50.0;
+                        break;
+                    case "LIVING_STREET":
+                        allowedVelocityByStreetType = 30.0;
+                        break;
+                }
+
+                setMaxTemporaryAllowedVelocity(Math.min(getMaxTemporaryAllowedVelocity(), allowedVelocityByStreetType));
+            }
+
+            // Set other values on bus that can change during simulation
+            controllerBus.get().setData(SIMULATION_DELTA_TIME.toString(), deltaT);
+            controllerBus.get().setData(VEHICLE_MAX_TEMPORARY_ALLOWED_VELOCITY.toString(), getMaxTemporaryAllowedVelocity());
 
             //Give the bus to the mainControlBlock
             controller.get().setInputs(controllerBus.get().getAllData());
