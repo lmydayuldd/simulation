@@ -113,7 +113,34 @@ public class GeomStreet implements EnvObjectGeomContainer {
      * @return the new Movement encapsulated as PedestrianStreetParameter
      */
     public PedestrianStreetParameters getMovementOfPedestrian(PedestrianStreetParameters lastParameters, double distance) {
-        return this.deter.getMovementOfPedestrian(lastParameters, distance);
+        PedestrianStreetParameters newParams = this.deter.getMovementOfPedestrian(lastParameters, distance);
+
+        // We need to check that we are still on the street to ensure we do not walk through the ground
+        Point3D calculatedPosition = newParams.getPosition();
+        double locationZOnGround = this.deter.getGround(
+                calculatedPosition.getX(),
+                calculatedPosition.getY(),
+                calculatedPosition.getZ()
+        );
+
+        // Only update if we have a actual change
+        if (locationZOnGround != calculatedPosition.getZ()) {
+            Point3D positionOnGround = new Point3D(
+                    calculatedPosition.getX(),
+                    calculatedPosition.getY(),
+                    locationZOnGround
+            );
+
+            // Update with the correct z location
+            newParams = new PedestrianStreetParameters(
+                    newParams.isCrossing(),
+                    positionOnGround,
+                    newParams.isDirection(),
+                    newParams.isLeftPavement()
+            );
+        }
+
+        return newParams;
     }
 
     /**

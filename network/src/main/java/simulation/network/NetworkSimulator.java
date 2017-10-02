@@ -5,6 +5,8 @@ import commons.simulation.DiscreteEventSimulator;
 import commons.simulation.PhysicalObject;
 import commons.simulation.SimulationLoopExecutable;
 import simulation.network.settings.SettingsCellular;
+import simulation.network.settings.SettingsDirect;
+import simulation.network.settings.SettingsSimple;
 import simulation.util.Log;
 import simulation.vehicle.PhysicalVehicle;
 
@@ -40,7 +42,7 @@ public class NetworkSimulator extends DiscreteEventSimulator {
         networkNodes.clear();
 
         // Load network settings
-        networkSettings = new SettingsCellular();
+        networkSettings = new SettingsDirect();
     }
 
     /**

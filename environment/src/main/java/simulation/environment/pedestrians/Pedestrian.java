@@ -13,12 +13,10 @@ import org.apache.commons.math3.linear.BlockRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import simulation.environment.geometry.osmadapter.GeomStreet;
+import simulation.environment.geometry.splines.StreetInterpolator;
 import simulation.util.Log;
 
-import java.util.AbstractMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class that represents a pedestrian in the simulation
@@ -52,6 +50,8 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
     /** Unique ID */
     private long uniqueId = IdGenerator.getSharedInstance().generateUniqueId();
 
+    private StreetInterpolator mInterpolator;
+
     /**
      * Constructor for a pedestrian that is standing at its position Initial
      * position at origin
@@ -63,6 +63,8 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
         error = false;
         speed = new ArrayRealVector(new double[] { 0.0, 0.0, 0.0 });
         rotationZ = 0.0;
+
+        mInterpolator = new StreetInterpolator(geomStreet);
     }
 
     /**
@@ -330,9 +332,15 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
         // get last movement parameters
         PedestrianStreetParameters movementParameters = this.getStreetParameters();
 
+        /*
+        if (this.collision) {
+            // If we have collided with another object we will stop movement
+            return;
+        }
+        */
 
-        if(Math.random() < 0.025 && !movementParameters.isCrossing()) {
-            // So there is a 4% chances that we will cross the street
+        if(Math.random() < 0.0003 && !movementParameters.isCrossing()) {
+            // So there is a 0.03% chances that we will cross the street
             // This is the case and we will be just updating the state with the crossing flag
             movementParameters = new PedestrianStreetParameters(
                     true,
@@ -345,7 +353,8 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
         // compute new movement parameters
         // movement a pedestrians does in each time step
         double distance = PEDESTRIAN_SPEED_DEFAULT * timeDiffMs;
-        PedestrianStreetParameters newParams = this.geomStreet.getMovementOfPedestrian(movementParameters, distance);
+        //PedestrianStreetParameters newParams = this.geomStreet.getMovementOfPedestrian(movementParameters, distance);
+        PedestrianStreetParameters newParams = mInterpolator.calculateNewMovement(movementParameters, distance);
 
         // set new movement parameters in pedestrian
         this.setStreetParameters(newParams);
@@ -360,5 +369,10 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
     public void setStreetParameters(PedestrianStreetParameters newParams) {
         params = newParams;
         setPosition(Geometry.point3D2RealVector(newParams.getPosition()));
+    }
+
+    public void spawnAtRandomLocation(Random random) {
+        PedestrianStreetParameters params = mInterpolator.spawnAtRandomLocation(random);
+        setStreetParameters(params);
     }
 }

@@ -855,11 +855,12 @@ public class SimulatorTest {
     /**
      * Test that registerAndPutObject() puts pedestrians at desired location and rotation
      */
+    @Ignore
     @Test
     public void registerAndPutPedestrian() {
         Simulator sim = Simulator.getSharedInstance();
 
-        //Create car
+        //Create pedestrian
         Pedestrian pedestrian = new Pedestrian(null);
 
         //Register and put object

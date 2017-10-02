@@ -38,7 +38,7 @@ public class SettingsSimple extends NetworkSettings {
                 {24000, 6, 2, 3},
                 {27000, 6, 3, 4},
         });
-        setModulationAndDataRateInfoDefaultIndex(4);
+        setModulationAndDataRateInfoDefaultIndex(0);
 
         setApplicationBeaconUpdateInterval(375000000L);
 

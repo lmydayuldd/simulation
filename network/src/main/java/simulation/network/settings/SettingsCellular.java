@@ -51,7 +51,7 @@ public class SettingsCellular extends NetworkSettings {
         });
 
         // Must be set to an uplink index, channel objects shifts it to downlink when needed
-        setModulationAndDataRateInfoDefaultIndex(3);
+        setModulationAndDataRateInfoDefaultIndex(0);
 
         setApplicationBeaconUpdateInterval(375000000L);
 

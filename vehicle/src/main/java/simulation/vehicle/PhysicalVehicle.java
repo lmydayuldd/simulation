@@ -743,8 +743,11 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
             calcAngularMomentumDeriv();
             calcForce();
 
-            calcPosition(deltaT);
+            // Some sources put position before velocity, others do it the other way around
+            // calcPosition(deltaT);
             calcVelocityAndAcceleration(deltaT);
+            calcPosition(deltaT);
+
             calcRotationMatrix(deltaT);
             calcAngularMomentum(deltaT);
             calcInertiaInverse();
