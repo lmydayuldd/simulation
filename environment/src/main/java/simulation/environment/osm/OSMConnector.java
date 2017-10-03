@@ -66,7 +66,7 @@ public class OSMConnector
      * @throws ParserConfigurationException
      */
     @SuppressWarnings("nls")
-    private Document getXML(double lon, double lat, double vicinityRange) throws IOException, SAXException,
+    public Document getXML(double lon, double lat, double vicinityRange) throws IOException, SAXException,
             ParserConfigurationException {
 
         DecimalFormat format = new DecimalFormat("##0.0000000", DecimalFormatSymbols.getInstance(Locale.ENGLISH)); //$NON-NLS-1$
