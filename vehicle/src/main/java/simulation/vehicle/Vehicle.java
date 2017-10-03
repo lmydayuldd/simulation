@@ -397,16 +397,16 @@ public class Vehicle {
 
                 switch(streetType){
                     case "MOTORWAY":
-                        allowedVelocityByStreetType = 100.0;
+                        allowedVelocityByStreetType = (100.0 / 3.6);
                         break;
                     case "A_ROAD":
-                        allowedVelocityByStreetType = 70.0;
+                        allowedVelocityByStreetType = (70.0 / 3.6);
                         break;
                     case "STREET":
-                        allowedVelocityByStreetType = 50.0;
+                        allowedVelocityByStreetType = (50.0 / 3.6);
                         break;
                     case "LIVING_STREET":
-                        allowedVelocityByStreetType = 30.0;
+                        allowedVelocityByStreetType = (30.0 / 3.6);
                         break;
                 }
 

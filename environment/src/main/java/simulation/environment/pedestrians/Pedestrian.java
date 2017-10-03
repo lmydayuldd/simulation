@@ -64,7 +64,9 @@ public class Pedestrian implements SimulationLoopExecutable, PhysicalObject, IPe
         speed = new ArrayRealVector(new double[] { 0.0, 0.0, 0.0 });
         rotationZ = 0.0;
 
-        mInterpolator = new StreetInterpolator(geomStreet);
+        if (geomStreet != null) {
+            mInterpolator = new StreetInterpolator(geomStreet);
+        }
     }
 
     /**
