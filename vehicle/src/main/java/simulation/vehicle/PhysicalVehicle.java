@@ -907,6 +907,7 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
         Log.warning("PhysicalVehicle: setCollision - collision: " + collision + ", PhysicalVehicle at start: " + this);
         this.collision = collision;
 
+        /*
         if (collision) {
             this.velocity = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
             this.acceleration = new ArrayRealVector(new double[] {0.0, 0.0, 0.0});
@@ -921,6 +922,7 @@ public class PhysicalVehicle implements SimulationLoopExecutable, PhysicalObject
             }
             this.simulationVehicle.setWheelMassPoints(points);
         }
+        */
 
         Log.warning("PhysicalVehicle: setCollision - collision: " + collision + ", PhysicalVehicle at end: " + this);
     }

@@ -376,6 +376,15 @@ public class Simulator {
         }
 
         synchronized (simulationObjects) {
+            // Reset forces on every Physical object
+            for(SimulationLoopExecutable object : simulationObjects) {
+                if (object instanceof PhysicalObject) {
+                    PhysicsEngine.resetForces((PhysicalObject) object);
+                }
+            }
+        }
+
+        synchronized (simulationObjects) {
             for (SimulationLoopExecutable object : simulationObjects) {
 
                 // Inform observers about upcoming loop iteration for each object
@@ -387,7 +396,6 @@ public class Simulator {
 
                 //Execute loop
                 if(object instanceof PhysicalObject){
-                    PhysicsEngine.resetForces((PhysicalObject) object);
                     PhysicsEngine.computePhysics((PhysicalObject) object, getPhysicalObjects(), timeBetweenLastIterations);
                 }
 
