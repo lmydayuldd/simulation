@@ -70,7 +70,14 @@ public class WorldModel implements World{
 
     private ControllerContainer contContainer;
 
-    private WorldModel(ParserSettings pSettings, WeatherSettings settings) throws Exception {
+    /**
+     * Bypass singleton restriction.
+     * 
+     * @param pSettings
+     * @param settings
+     * @throws Exception
+     */
+    public WorldModel(ParserSettings pSettings, WeatherSettings settings) throws Exception {
         this.pSettings = pSettings;
         parseWorld(pSettings);
         constructGeomStreets();
