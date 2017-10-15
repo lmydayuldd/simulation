@@ -1,3 +1,5 @@
+<a href="https://codeclimate.com/github/MontiSim/simulation/maintainability"><img src="https://api.codeclimate.com/v1/badges/0ff9cfde324c783f7957/maintainability" /></a>
+
 # Simulation
 This repository includes the classes for the management of the simulation, the physics computations, the environment, the sensors and the vehicles.
 
