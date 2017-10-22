@@ -1,4 +1,4 @@
-<a href="https://codeclimate.com/github/MontiSim/simulation/maintainability"><img src="https://api.codeclimate.com/v1/badges/0ff9cfde324c783f7957/maintainability" /></a>
+<a href="https://codeclimate.com/github/MontiSim/simulation/maintainability"><img src="https://api.codeclimate.com/v1/badges/0ff9cfde324c783f7957/maintainability" /></a>   [![Build Status](https://travis-ci.org/MontiSim/simulation.svg?branch=master)](https://travis-ci.org/MontiSim/simulation)   [![Coverage Status](https://coveralls.io/repos/github/MontiSim/simulation/badge.svg?branch=master)](https://coveralls.io/github/MontiSim/simulation?branch=master)
 
 # Simulation
 This repository includes the classes for the management of the simulation, the physics computations, the environment, the sensors and the vehicles.
