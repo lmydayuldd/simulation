@@ -7,13 +7,13 @@
     <parent>
         <artifactId>simulation</artifactId>
         <groupId>montisim</groupId>
-        <version>1.0.0</version>
+        <version>0.1.0-t175pS4HuUyNcrh</version>
     </parent>
 
     <!-- OUR OWN PROJECT -->
     <artifactId>environment</artifactId>
     <groupId>montisim-simulation</groupId>
-    <version>1.0.0</version>
+    <version>0.1.0-t175pS4HuUyNcrh</version>
 
     <!-- Repository for osm4j -->
     <repositories>
@@ -30,14 +30,14 @@
         <dependency>
             <groupId>montisim-simulation</groupId>
             <artifactId>util</artifactId>
-            <version>1.0.0</version>
+            <version>0.1.0-t175pS4HuUyNcrh</version>
         </dependency>
 
         <!-- Dependency to commons -->
         <dependency>
             <groupId>montisim</groupId>
             <artifactId>commons</artifactId>
-            <version>1.0.0</version>
+            <version>0.1.0-t175pS4HuUyNcrh</version>
         </dependency>
 
         <dependency>
