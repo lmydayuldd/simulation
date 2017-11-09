@@ -22,6 +22,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static simulation.vehicle.MassPointType.*;
 
+
+import simulation.environment.object.Tree;
+import simulation.environment.object.House;
+import simulation.environment.object.RoadWorkSign;
+import simulation.environment.object.StreetLantern;
+
 /**
  * Logic and object management of the simulation
  */
@@ -1059,6 +1065,28 @@ public class Simulator {
             double groundZ = WorldModel.getInstance().getGround(finalPosX, finalPosY, tree.getGeometryPos().getEntry(2)).doubleValue();
             tree.setPosition(new ArrayRealVector(new double[] {finalPosX, finalPosY, groundZ + 0.5 * tree.getHeight()}));
             tree.setRotationZ(finalRotZ);
+            
+        // Handle StreetLantern
+        } else if (physicalObject instanceof StreetLantern) {
+            StreetLantern streetLantern = (StreetLantern) (physicalObject);
+            double groundZ = WorldModel.getInstance().getGround(finalPosX, finalPosY, streetLantern.getGeometryPos().getEntry(2)).doubleValue();
+            streetLantern.setPosition(new ArrayRealVector(new double[] {finalPosX, finalPosY, groundZ + 0.5 * streetLantern.getHeight()}));
+            streetLantern.setRotationZ(finalRotZ);
+
+        // Handle RoadWorkSign
+        } else if (physicalObject instanceof RoadWorkSign) {
+            RoadWorkSign roadWorkSign = (RoadWorkSign) (physicalObject);
+            double groundZ = WorldModel.getInstance().getGround(finalPosX, finalPosY, roadWorkSign.getGeometryPos().getEntry(2)).doubleValue();
+            roadWorkSign.setPosition(new ArrayRealVector(new double[] {finalPosX, finalPosY, groundZ + 0.5 * roadWorkSign.getHeight()}));
+            roadWorkSign.setRotationZ(finalRotZ);
+
+        // Handle House
+        } else if (physicalObject instanceof House) {
+            House house = (House) (physicalObject);
+            double groundZ = WorldModel.getInstance().getGround(finalPosX, finalPosY, house.getGeometryPos().getEntry(2)).doubleValue();
+            house.setPosition(new ArrayRealVector(new double[] {finalPosX, finalPosY, groundZ + 0.5 * house.getHeight()}));
+            house.setRotationZ(finalRotZ);
+
 
         // Handle NetworkCellBaseStation
         } else if (physicalObject instanceof NetworkCellBaseStation) {
