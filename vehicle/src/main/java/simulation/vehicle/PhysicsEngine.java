@@ -46,8 +46,13 @@ public class PhysicsEngine{
 
         double deltaT = timeDiffMs / 1000.0;
 
-        //Do not compute collision if the object has a computational error
-        if (!object.getError()) {
+        //Do not compute collision if the object has a computational error or is not a car
+        if (!object.getError() && (object.getPhysicalObjectType() == PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_DEFAULT||
+                object.getPhysicalObjectType()==PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_1||
+                object.getPhysicalObjectType()==PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_2||
+                object.getPhysicalObjectType()==PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_3||
+                object.getPhysicalObjectType()==PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_4||
+                object.getPhysicalObjectType()==PhysicalObjectType.PHYSICAL_OBJECT_TYPE_CAR_5))) {
 
             // Check objects for collisions
             for (PhysicalObject physicalObject : physicalObjects) {
@@ -107,8 +112,19 @@ public class PhysicsEngine{
                 //No physics computations for trees
                 break;
             case PHYSICAL_OBJECT_TYPE_NETWORK_CELL_BASE_STATION:
-                //No physics computations for trees
+                //No physics computations for cell base stations
                 break;
+            case PHYSICAL_OBJECT_TYPE_STREETLANTERN:
+                //No physics computations for lanterns
+                break;
+            case PHYSICAL_OBJECT_TYPE_ROADWORKSIGN:
+                //No physics computations for roadworksigns
+                break;
+
+            case PHYSICAL_OBJECT_TYPE_HOUSE:
+                //No physics computations for houses
+                break;    
+               
             default:
                 //Invalid type
                 Log.warning("PhysicsEngine: Invalid type in computePhysics");
