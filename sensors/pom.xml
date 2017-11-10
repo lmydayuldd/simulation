@@ -7,13 +7,13 @@
     <parent>
         <artifactId>simulation</artifactId>
         <groupId>montisim</groupId>
-        <version>0.1.0-t175pS4HuUyNcrh</version>
+        <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
     </parent>
 
     <!-- OUR OWN PROJECT -->
     <artifactId>sensors</artifactId>
     <groupId>montisim-simulation</groupId>
-    <version>0.1.0-t175pS4HuUyNcrh</version>
+    <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
 
     <!-- PROJECT DEPENDENCIES -->
     <dependencies>
@@ -24,28 +24,28 @@
         <dependency>
             <groupId>montisim-simulation</groupId>
             <artifactId>util</artifactId>
-            <version>0.1.0-t175pS4HuUyNcrh</version>
+            <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
         </dependency>
 
         <!-- Sensors have dependency to environment -->
         <dependency>
             <groupId>montisim-simulation</groupId>
             <artifactId>environment</artifactId>
-            <version>0.1.0-t175pS4HuUyNcrh</version>
+            <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
         </dependency>
 
         <!-- Sensors have dependency to vehicle -->
         <dependency>
             <groupId>montisim-simulation</groupId>
             <artifactId>vehicle</artifactId>
-            <version>0.1.0-t175pS4HuUyNcrh</version>
+            <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
         </dependency>
 
         <!-- Sensors have dependency to commons -->
         <dependency>
             <groupId>montisim</groupId>
             <artifactId>commons</artifactId>
-            <version>0.1.0-t175pS4HuUyNcrh</version>
+            <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
         </dependency>
         <dependency>
             <groupId>com.jhlabs</groupId>

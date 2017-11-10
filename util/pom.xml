@@ -8,13 +8,13 @@
     <parent>
         <artifactId>simulation</artifactId>
         <groupId>montisim</groupId>
-        <version>0.1.0-t175pS4HuUyNcrh</version>
+        <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
     </parent>
 
     <!-- OUR OWN PROJECT -->
     <artifactId>util</artifactId>
     <groupId>montisim-simulation</groupId>
-    <version>0.1.0-t175pS4HuUyNcrh</version>
+    <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
 
     <!-- PROJECT DEPENDENCIES -->
     <dependencies>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>montisim</groupId>
             <artifactId>commons</artifactId>
-            <version>0.1.0-t175pS4HuUyNcrh</version>
+            <version>0.1.1-fGWiGhVOHEqxe9fiCfQF6Q</version>
         </dependency>
 
     </dependencies>
