@@ -58,6 +58,37 @@ public class WorldModel implements World{
         return ourInstance;
     }
 
+    /**
+     * Initialize singleton World instance.
+     * 
+     * No map parsing done in this method,
+     * rather only weather settings are 
+     * getting parsed and already prepared
+     * visualisation container is set and used.
+     * 
+     * @param visContainer - already parsed map
+     * @param weatherSettings - weather settings
+     * @return singleton World instance
+     */
+    public static World init(VisualisationEnvironmentContainer visContainer, WeatherSettings weatherSettings) {
+    	ourInstance = new WorldModel(visContainer, weatherSettings);
+    	return ourInstance;
+    }
+    
+    /**
+     * Parse only the world map and return
+     * its VisualisationEnvironmentContainer.
+     * 
+     * This method does not initialize the singleton World instance!
+     * 
+     * @param pSettings - parser settings
+     * @return VisualisationEnvironmentContainer object
+     * @throws Exception
+     */
+    public static VisualisationEnvironmentContainer prepareWorldMap(ParserSettings pSettings) throws Exception {
+    	return new WorldModel(pSettings).getContainer();
+    }
+
     private VisualisationEnvironmentContainer visualisationContainer;
 
     private ArrayList<GeomStreet> streets;
@@ -70,14 +101,8 @@ public class WorldModel implements World{
 
     private ControllerContainer contContainer;
 
-    /**
-     * Bypass singleton restriction.
-     * 
-     * @param pSettings
-     * @param settings
-     * @throws Exception
-     */
-    public WorldModel(ParserSettings pSettings, WeatherSettings settings) throws Exception {
+    
+    private WorldModel(ParserSettings pSettings, WeatherSettings settings) throws Exception {
         this.pSettings = pSettings;
         parseWorld(pSettings);
         constructGeomStreets();
@@ -96,8 +121,37 @@ public class WorldModel implements World{
         constructControllerContainer();
         initPedestrians();
     }
+    
+    /**
+     * Parse world only, no operations 
+     * on weather settings required.
+     * 
+     * @param pSettings - parser settings
+     * @throws Exception
+     */
+    private WorldModel(ParserSettings pSettings) throws Exception {
+    	this.pSettings = pSettings;
+        parseWorld(pSettings);
+    }
 
-    private void initPedestrians() {
+    /**
+     * Parse weather settings only.
+     * VisualizationContainer is already prepared.
+     * 
+     * @param visContainer - parsed map
+     * @param weatherSettings - weather settings
+     */
+    private WorldModel(VisualisationEnvironmentContainer visContainer, WeatherSettings weatherSettings) {
+		//directly assign visualization container - no map-parsing required
+    	this.visualisationContainer = visContainer;
+		constructGeomStreets();
+        positionStreetSigns();
+        initWeather(weatherSettings);
+        constructControllerContainer();
+        initPedestrians();
+	}
+
+	private void initPedestrians() {
         this.pedContainer = new PedestrianContainer(this.streets, 1);
     }
 
